@@ -1,9 +1,12 @@
+from django.http import HttpResponse
 from contents.models import Feed, Comment
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, TemplateView
 from django.contrib import messages
 from django.db.models import Q
+
+
 import torch
 import cv2
 
@@ -37,6 +40,16 @@ def post(request):
         my_feed.save()
 
         tags = request.POST.get('tag', '').split(',')
+        
+        model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+        imgs = cv2.imread(my_feed.image)# batch of images
+        print(imgs)
+        results = model(imgs)
+        results.print()
+        results.save() # or .show()
+        results.xyxy[0] # img1 predictions (tensor)
+        results.pandas().xyxy[0] # img1 predictions (pandas)
+
         for tag in tags:
             tag = tag.strip()
             if tag != '': # 태그를 작성하지 않았을 경우에 저장하지 않기 위해서
@@ -83,6 +96,7 @@ def post_update(request, id):
 
 
 
+
 class TagCloudTV(TemplateView):
     template_name = 'taggit/tag_cloud_view.html'
 
@@ -119,15 +133,6 @@ def search(request):
 
     return render(request, 'search.html',{'searched':searched, 'q': q })
 
-
-# def detail_comment(request, id ): # 댓글 읽기
-#     my_feed = Feed.objects.get(id=id)
-#     comment = Comment.objects.filter(tweet_id=id).order_by('-created_at')
-
-#     return render(request,'index.html', my_feed=my_feed, comment=comment )
-
-
-
 def write_comment(request, id): # 댓글 쓰기
     if request.method == 'POST':
         current_comment = Feed.objects.get(id=id)
@@ -149,4 +154,5 @@ def delete_comment(request, id ): # 댓글 삭제
     comment = request.POST.get('comment')
     feed.delete()
     return redirect('/')
+
 

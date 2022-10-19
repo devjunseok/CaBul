@@ -92,7 +92,6 @@ def activate(request, uidb64, token):
         return redirect("/")
     else:
         return render(request, 'home.html', {'error' : '계정 활성화 오류'})
-    return 
 
 def login(request):
     if request.method == 'GET':

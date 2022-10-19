@@ -9,6 +9,7 @@ urlpatterns = [
     path('update/<int:id>', views.post_update, name='post_update'),
     path('search/', views.search, name='search'),
     path('detail/comment/<int:id>',views.write_comment, name='write_comment'), # 댓글 쓰기
-    path('detail/comment/delete/<int:id>',views.delete_comment, name='delete_comment'), # 해당 삭제
+    path('detail/comment/delete/<int:id>',views.delete_comment, name='delete_comment'),
+#     path('machine/', views.machine, name="machine"),
 ]
 
