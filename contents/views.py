@@ -1,9 +1,13 @@
+from django.http import HttpResponse
 from contents.models import Feed, Comment
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, TemplateView
 from django.contrib import messages
 from django.db.models import Q
+from .machine import *
+import torch
+import cv2
 
 @login_required
 def post(request):
@@ -20,6 +24,16 @@ def post(request):
         my_feed.category = request.POST.get('category', '')
         my_feed.save()
         tags = request.POST.get('tag', '').split(',')
+        
+        model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+        imgs = cv2.imread(my_feed.image)# batch of images
+        print(imgs)
+        results = model(imgs)
+        results.print()
+        results.save() # or .show()
+        results.xyxy[0] # img1 predictions (tensor)
+        results.pandas().xyxy[0] # img1 predictions (pandas)
+
         for tag in tags:
             tag = tag.strip()
             if tag != '': # 태그를 작성하지 않았을 경우에 저장하지 않기 위해서
@@ -64,35 +78,6 @@ def post_update(request, id):
         
         return redirect('contents:post_detail', post.id)
 
-# @login_required
-# def Upload(request):
-#     if request.method == 'GET':  # 요청하는 방식이 GET 방식인지 확인하기
-#         return render(request, 'upload.html')
-
-#     if request.method == 'POST':
-#         user = request.user
-#         my_feed = Feed()  # 글쓰기 모델 가져오기
-#         my_feed.user = user
-#         my_feed.title = request.POST.get('title', '')  # 모델에 글 저장
-#         my_feed.content = request.POST.get('content', '')  # 모델에 글 저장
-#         my_feed.like = 0
-#         my_feed.image = "https://i1.ruliweb.com/img/22/10/04/1839e60028750ad5d.jpg"
-#         my_feed.category = request.POST.get('category', '') # 모델에 카테고리 저장
-#         my_feed.save()
-#         tags = request.POST.get('tag', '').split(',')
-#         for tag in tags:
-#             tag = tag.strip()
-#             if tag != '': # 태그를 작성하지 않았을 경우에 저장하지 않기 위해서
-#                 my_feed.tags.add(tag)
-#         return redirect('/')
-
-
-# def FeedDetail(request, id):
-#     my_feed = Feed.objects.get(id=id)
-#     comment = Comment.objects.filter(feed_id=id).order_by('-created_at')
-#     return render(request, 'index.html', {'feeds':my_feed, 'comments': comment})
-
-
 class TagCloudTV(TemplateView):
     template_name = 'taggit/tag_cloud_view.html'
 
@@ -129,15 +114,6 @@ def search(request):
 
     return render(request, 'search.html',{'searched':searched, 'q': q })
 
-
-# def detail_comment(request, id ): # 댓글 읽기
-#     my_feed = Feed.objects.get(id=id)
-#     comment = Comment.objects.filter(tweet_id=id).order_by('-created_at')
-
-#     return render(request,'index.html', my_feed=my_feed, comment=comment )
-
-
-
 def write_comment(request, id): # 댓글 쓰기
     if request.method == 'POST':
         current_comment = Feed.objects.get(id=id)
@@ -159,3 +135,5 @@ def delete_comment(request, id ): # 댓글 삭제
     comment = request.POST.get('comment')
     feed.delete()
     return redirect('/')
+
+
