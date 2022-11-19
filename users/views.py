@@ -121,7 +121,7 @@ def delete(request):   #회원탈퇴
         request.user.delete()
     return render(request, 'signup.html')
 
-
+ 
 def update(request, id): # 회원정보 수정
     if request.method == 'GET':# 프로필 수정 페이지 접근
         user_feed = Feed.objects.filter(user_id=request.user.id)
@@ -230,6 +230,7 @@ def password(request, id): # 비밀번호
             new_password = request.POST["new_password"]
             confirm_password = request.POST["confirm_password"]
             
+            
             if new_password != confirm_password:
                 return render(request, 'profile_edit_password.html', {'error':'새 비밀번호를 확인해주세요.'})
             elif (len(new_password) < 8):
@@ -281,7 +282,7 @@ def user_view(request): #
         }
         return render(request, 'follow.html', context)
         
-
+ 
 
 @login_required
 def user_follow(request, id):
