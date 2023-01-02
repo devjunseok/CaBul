@@ -13,7 +13,7 @@
 
 백엔드  Repository :[https://github.com/devjunseok/CaBul](https://github.com/devjunseok/CaBul)
 
-S.A 링크 : [B-1팀 사물인식 서비스](hhttps://iodized-justice-c7c.notion.site/B1-56fb2a3285fe4d8cb53e1f9f5494d948)
+S.A 링크 : [B-1팀 사물인식 서비스](https://iodized-justice-c7c.notion.site/B1-56fb2a3285fe4d8cb53e1f9f5494d948)
 
 ## 1. 프로젝트 주제
 
