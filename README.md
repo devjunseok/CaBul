@@ -7,7 +7,7 @@
 
 시연 영상 :
 
-[https://youtu.be/Sg0NXNq49mw/](hhttps://youtu.be/Sg0NXNq49mw/)
+[https://youtu.be/Sg0NXNq49mw/](https://youtu.be/Sg0NXNq49mw/)
 
 프로젝트 일정 : 2022.10.17 ~ 2022.10.21
 
